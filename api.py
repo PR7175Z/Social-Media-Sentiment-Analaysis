@@ -1,28 +1,49 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, conlist
-import pickle
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-from flask_cors import CORS
-
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+import joblib
 
 app = FastAPI()
-CORS(app)
 
-with open('diabetes_prediction.pkl', 'rb') as f:
-    loaded_model = pickle.load(f)
+# Correct CORS setup for FastAPI
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust as needed
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+encoder = joblib.load('encoder.pkl')
+vectorizer = joblib.load('vectorizer.pkl')
+loaded_model = joblib.load('sentimentanalyze.pkl')
+
+wnl = WordNetLemmatizer()
+
+def preprocessText(text):
+    text = text.lower()
+
+    tokens = word_tokenize(text)
+
+    filtered = [token for token in tokens if token.isalpha()]
+
+    lemmas = [wnl.lemmatize(x) for x in filtered]
+
+    return ' '.join(lemmas)
+
 
 class feature(BaseModel):
-    features:conlist(float, min_length = 10, max_length = 10)
+    text: str
 
 @app.post('/predict')
 def predict(data: feature):
     try:
-        scaler = StandardScaler()
-
-        features = np.array(data.features).reshape(1, -1)
-        features_reshape = scaler.fit_transform(features)
-        prediction = loaded_model.predict(features_reshape)
-        return (f'Prediction : {int(prediction)}')
+        filteredinput = preprocessText(data.text)
+        input_vect = vectorizer.transform([filteredinput])
+        prediction = loaded_model.predict(input_vect)
+        encoded_pred = encoder.inverse_transform(prediction)
+        return (f'Prediction : {encoded_pred[0]}')
     except Exception as e:
         return HTTPException(status_code = 500, detail = str(e))
