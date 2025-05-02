@@ -44,6 +44,6 @@ def predict(data: feature):
         input_vect = vectorizer.transform([filteredinput])
         prediction = loaded_model.predict(input_vect)
         encoded_pred = encoder.inverse_transform(prediction)
-        return (f'Prediction : {encoded_pred[0]}')
+        return (encoded_pred[0])
     except Exception as e:
         return HTTPException(status_code = 500, detail = str(e))
