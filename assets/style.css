@@ -1,5 +1,43 @@
+body{
+    font-family: 'Poppins';
+}
 .container{
-    width: 1200px;
+    width: 900px;
     max-width: 100%;
     margin: 30px auto;
+}
+.content-area{
+    display: flex;
+}
+
+.form-area{
+    width: 500px;
+}
+
+.form-area form textarea{
+    width: 450px;
+    height: 200px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-family: 'Poppins';
+    padding: 10px;
+}
+
+.form-area .submitbtn{
+    padding: 8px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #000;
+    color: #fff;
+    border: none;
+}
+
+.form-area .submitbtn:hover{
+    background-color: #fff;
+    border: 1px solid #000;
+    color: #000;
+}
+
+.result{
+    width: 200px;
 }
