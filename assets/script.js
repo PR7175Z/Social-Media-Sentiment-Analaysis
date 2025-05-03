@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    function capitalizeFirstLetter(val) {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
+
     async function get_response(inputtext) {
         const features = {'text': inputtext}
 
@@ -28,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 let response = await get_response( inputValue);
 
-                document.querySelector('.result').innerHTML = response;
+                document.querySelector('.result').innerHTML = capitalizeFirstLetter(response);
             } catch (error) {
                 console.error("Error:", error);
             }
